@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=snowflake-pulse
+Description=A NixOS Plymouth theme with a pulsing glow
+ModuleName=script
+
+[script]
+ImageDir=@PLYMOUTH_THEME_PATH@/snowflake-pulse
+ScriptFile=@PLYMOUTH_THEME_PATH@/snowflake-pulse/snowflake-pulse.script

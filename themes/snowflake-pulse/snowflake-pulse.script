@@ -1,0 +1,29 @@
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);
+
+logo.image = Image("logo.png");
+glow.image = Image("glow.png");
+
+glow.sprite = Sprite(glow.image);
+logo.sprite = Sprite(logo.image);
+
+glow.sprite.SetPosition(
+  Window.GetX() + Window.GetWidth() / 2 - glow.image.GetWidth() / 2,
+  Window.GetY() + Window.GetHeight() / 2 - glow.image.GetHeight() / 2,
+  0
+);
+logo.sprite.SetPosition(
+  Window.GetX() + Window.GetWidth() / 2 - logo.image.GetWidth() / 2,
+  Window.GetY() + Window.GetHeight() / 2 - logo.image.GetHeight() / 2,
+  1
+);
+
+angle = 0;
+fun refresh_callback()
+{
+  angle += 0.0628;
+  opacity = (Math.Cos(angle) + 1) / 2;
+  glow.sprite.SetOpacity(opacity);
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);

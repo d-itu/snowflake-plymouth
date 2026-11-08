@@ -1,7 +1,15 @@
 {
-    description = "A plymouth theme for NixOS that pulsates the NixOS logo.";
+  description = "A Plymouth theme for NixOS that pulses the NixOS logo";
 
-    outputs = inputs: {
-        nixosModules.default = ./default.nix;
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+
+  outputs =
+    { nixpkgs, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      packages.${system}.default = pkgs.callPackage ./pkgs/snowflake-plymouth.nix { };
     };
 }

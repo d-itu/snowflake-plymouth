@@ -6,17 +6,14 @@
   nixos-icons,
 
   logoSvg ? "${nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake-white.svg",
-  width ? 64,
-  height ? 64,
-  blurSigma ? 10.5,
-  progressBarWidth ? 160,
-  progressBarHeight ? 3,
-  progressBarVerticalAlignment ? 0.6,
+  scaleLogo ? true,
+  width ? 384,
+  height ? 384,
+  blurSigma ? 24,
+  glowPadding ? builtins.ceil (blurSigma * 2),
 }:
 assert width > 0 && height > 0 && blurSigma > 0;
-assert builtins.isInt progressBarWidth && progressBarWidth > 0;
-assert builtins.isInt progressBarHeight && progressBarHeight > 0;
-assert progressBarVerticalAlignment >= 0.0 && progressBarVerticalAlignment <= 1.0;
+assert builtins.isBool scaleLogo;
 let
   logoPng = runCommand "logo.png" { nativeBuildInputs = [ resvg ]; } ''
     resvg --width ${toString width} --height ${toString height} "${logoSvg}" "$out"
@@ -53,10 +50,9 @@ stdenvNoCC.mkDerivation {
     cp themes/snowflake/snowflake.plymouth.in "$theme/snowflake.plymouth"
     substituteInPlace "$theme/snowflake.plymouth" --replace-fail '@PLYMOUTH_THEME_PATH@' "$themes"
     cp themes/snowflake/snowflake.script "$theme/snowflake.script"
-    substituteInPlace "$theme/snowflake.script" \
-      --replace-fail '@PROGRESS_BAR_WIDTH@' '${toString progressBarWidth}' \
-      --replace-fail '@PROGRESS_BAR_HEIGHT@' '${toString progressBarHeight}' \
-      --replace-fail '@PROGRESS_BAR_VERTICAL_ALIGNMENT@' '${toString progressBarVerticalAlignment}' \
+    substituteInPlace "$theme/snowflake.script" --replace-fail '@SCALE_LOGO@' '${
+      if scaleLogo then "1" else "0"
+    }'
 
     cp "${logoPng}" "$theme/logo.png"
     cp "${glowPng}" "$theme/glow.png"

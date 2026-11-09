@@ -1,31 +1,58 @@
 Window.SetBackgroundTopColor(0, 0, 0);
 Window.SetBackgroundBottomColor(0, 0, 0);
 
-logo.image = Image("logo.png");
-glow.image = Image("glow.png");
+longest_side = Window.GetWidth();
+shortest_side = Window.GetWidth();
+if (Window.GetHeight() > longest_side)
+  longest_side = Window.GetHeight();
+if (Window.GetHeight() < shortest_side)
+  shortest_side = Window.GetHeight();
+
+progress.width = Math.Int(Window.GetWidth() * 0.112);
+progress.height = Math.Int(shortest_side * 0.003);
+if (progress.height < 3) progress.height = 3;
+if (progress.height > 8) progress.height = 8;
+
+logo.source = Image("logo.png");
+glow.source = Image("glow.png");
+logo.image = logo.source;
+glow.image = glow.source;
+if (@SCALE_LOGO@)
+{
+  scaled_height = Math.Int(longest_side * 0.05);
+  scaled_width = Math.Int(logo.source.GetWidth() * scaled_height / logo.source.GetHeight());
+  logo.image = logo.source.Scale(scaled_width, scaled_height);
+  glow.image = glow.source.Scale(
+    Math.Int(glow.source.GetWidth() * scaled_height / logo.source.GetHeight()),
+    Math.Int(glow.source.GetHeight() * scaled_height / logo.source.GetHeight())
+  );
+}
+logo.width = logo.image.GetWidth();
+logo.height = logo.image.GetHeight();
 
 glow.sprite = Sprite(glow.image);
 logo.sprite = Sprite(logo.image);
 
+logo.x = Window.GetX() + (Window.GetWidth() - logo.width) / 2;
+logo.y = (Window.GetHeight() - logo.height) / 2;
+max_logo_y = Window.GetHeight() - 2 * logo.height - progress.height;
+if (logo.y > max_logo_y) logo.y = max_logo_y;
+if (logo.y < 0) logo.y = 0;
+logo.y += Window.GetY();
+
 glow.sprite.SetPosition(
-  Window.GetX() + Window.GetWidth() / 2 - glow.image.GetWidth() / 2,
-  Window.GetY() + Window.GetHeight() / 2 - glow.image.GetHeight() / 2,
+  logo.x + (logo.width - glow.image.GetWidth()) * 0.5,
+  logo.y + (logo.height - glow.image.GetHeight()) * 0.5,
   0
 );
-logo.sprite.SetPosition(
-  Window.GetX() + Window.GetWidth() / 2 - logo.image.GetWidth() / 2,
-  Window.GetY() + Window.GetHeight() / 2 - logo.image.GetHeight() / 2,
-  1
-);
+logo.sprite.SetPosition(logo.x, logo.y, 1);
 
-progress.width = @PROGRESS_BAR_WIDTH@;
-progress.height = @PROGRESS_BAR_HEIGHT@;
 progress.trough = Image("progress-trough.png").Scale(progress.width, progress.height);
 progress.fill = Image("progress-fill.png");
 progress.trough_sprite = Sprite(progress.trough);
 progress.trough_sprite.SetPosition(
   Window.GetX() + (Window.GetWidth() - progress.width) / 2,
-  Window.GetY() + (Window.GetHeight() - progress.height) * @PROGRESS_BAR_VERTICAL_ALIGNMENT@,
+  logo.y + 2 * logo.height,
   2
 );
 progress.fill_sprite = Sprite();

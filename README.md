@@ -44,3 +44,4 @@ Once your host system has been configured:
 
 * Creating Glows in SVGs - www.youtube.com/watch?v=oe8RB4Y6Vi4
 * NixOS-Boot - https://github.com/Melkor333/nixos-boot
+* X-Plymouth progress bar approach - https://github.com/x-tech-laboratories/X-Plymouth

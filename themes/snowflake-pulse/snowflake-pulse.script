@@ -18,6 +18,60 @@ logo.sprite.SetPosition(
   1
 );
 
+progress.width = @PROGRESS_BAR_WIDTH@;
+progress.height = @PROGRESS_BAR_HEIGHT@;
+progress.trough = Image("progress-trough.png").Scale(progress.width, progress.height);
+progress.fill = Image("progress-fill.png");
+progress.trough_sprite = Sprite(progress.trough);
+progress.trough_sprite.SetPosition(
+  Window.GetX() + (Window.GetWidth() - progress.width) / 2,
+  Window.GetY() + (Window.GetHeight() - progress.height) * @PROGRESS_BAR_VERTICAL_ALIGNMENT@,
+  2
+);
+progress.fill_sprite = Sprite();
+progress.fill_sprite.SetPosition(
+  progress.trough_sprite.GetX(),
+  progress.trough_sprite.GetY(),
+  3
+);
+progress.fill_sprite.SetOpacity(0);
+progress.shown_width = 0;
+
+mode = Plymouth.GetMode();
+progress.is_update = mode == "updates" || mode == "system-upgrade" || mode == "firmware-upgrade";
+progress.visible = mode == "boot" || progress.is_update;
+progress.trough_sprite.SetOpacity(progress.visible);
+
+fun show_progress(fraction)
+{
+  if (fraction < 0) fraction = 0;
+  if (fraction > 1) fraction = 1;
+
+  width = Math.Int(progress.width * fraction);
+  if (width == 0)
+    progress.fill_sprite.SetOpacity(0);
+  else
+  {
+    if (width != progress.shown_width)
+      progress.fill_sprite.SetImage(progress.fill.Scale(width, progress.height));
+    progress.fill_sprite.SetOpacity(progress.visible);
+  }
+  progress.shown_width = width;
+}
+
+fun boot_progress_callback(duration, fraction)
+{
+  if (!progress.is_update) show_progress(fraction);
+}
+
+fun system_update_callback(percent)
+{
+  if (progress.is_update) show_progress(percent / 100);
+}
+
+Plymouth.SetBootProgressFunction(boot_progress_callback);
+Plymouth.SetSystemUpdateFunction(system_update_callback);
+
 angle = 0;
 fun refresh_callback()
 {

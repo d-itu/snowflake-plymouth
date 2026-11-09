@@ -10,11 +10,17 @@ BackgroundEndColor=0x000000
 WatermarkHorizontalAlignment=.5
 WatermarkVerticalAlignment=.5
 Transition=none
+ProgressBarHorizontalAlignment=.5
+ProgressBarVerticalAlignment=@PROGRESS_BAR_VERTICAL_ALIGNMENT@
+ProgressBarWidth=@PROGRESS_BAR_WIDTH@
+ProgressBarHeight=@PROGRESS_BAR_HEIGHT@
+ProgressBarBackgroundColor=0x404040
+ProgressBarForegroundColor=0xffffff
 
 [boot-up]
 UseAnimation=false
 UseEndAnimation=false
-UseProgressBar=false
+UseProgressBar=true
 
 [shutdown]
 UseAnimation=false
@@ -25,3 +31,18 @@ UseProgressBar=false
 UseAnimation=false
 UseEndAnimation=false
 UseProgressBar=false
+
+[updates]
+UseAnimation=false
+UseEndAnimation=false
+UseProgressBar=true
+
+[system-upgrade]
+UseAnimation=false
+UseEndAnimation=false
+UseProgressBar=true
+
+[firmware-upgrade]
+UseAnimation=false
+UseEndAnimation=false
+UseProgressBar=true

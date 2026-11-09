@@ -26,6 +26,12 @@ let
       -vf 'format=rgba,pad=iw+2*${toString glowPadding}:ih+2*${toString glowPadding}:(ow-iw)/2:(oh-ih)/2:color=black@0,geq=r=255:g=255:b=255:a=alpha(X\,Y),gblur=sigma=${toString blurSigma}:steps=2' \
       -frames:v 1 -f image2 -update 1 "$out"
   '';
+  twoStepImages = runCommand "two-step-images" { nativeBuildInputs = [ resvg ]; } ''
+    mkdir -p "$out"
+    for image in lock entry bullet capslock; do
+      resvg "${../resources}/$image.svg" "$out/$image.png"
+    done
+  '';
   progressImages = runCommand "progress-images" { nativeBuildInputs = [ ffmpeg ]; } ''
     mkdir -p "$out"
     for item in trough:0x404040 fill:0xffffff; do
@@ -72,6 +78,7 @@ stdenvNoCC.mkDerivation {
       --replace-fail '@PROGRESS_BAR_VERTICAL_ALIGNMENT@' '${toString progressBarVerticalAlignment}' \
 
     cp "${logoPng}" "$theme/watermark.png"
+    cp "${twoStepImages}"/*.png "$theme/"
 
     runHook postInstall
   '';

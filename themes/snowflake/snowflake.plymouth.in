@@ -1,0 +1,27 @@
+[Plymouth Theme]
+Name=snowflake
+Description=A static NixOS snowflake on a black background
+ModuleName=two-step
+
+[two-step]
+ImageDir=@PLYMOUTH_THEME_PATH@/snowflake
+BackgroundStartColor=0x000000
+BackgroundEndColor=0x000000
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.5
+Transition=none
+
+[boot-up]
+UseAnimation=false
+UseEndAnimation=false
+UseProgressBar=false
+
+[shutdown]
+UseAnimation=false
+UseEndAnimation=false
+UseProgressBar=false
+
+[reboot]
+UseAnimation=false
+UseEndAnimation=false
+UseProgressBar=false

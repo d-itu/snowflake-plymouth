@@ -42,6 +42,12 @@ stdenvNoCC.mkDerivation {
     cp "${logoPng}" "$theme/logo.png"
     cp "${glowPng}" "$theme/glow.png"
 
+    theme="$themes/snowflake"
+    mkdir -p "$theme"
+    cp themes/snowflake/snowflake.plymouth.in "$theme/snowflake.plymouth"
+    substituteInPlace "$theme/snowflake.plymouth" --replace-fail '@PLYMOUTH_THEME_PATH@' "$themes"
+    cp "${logoPng}" "$theme/watermark.png"
+
     runHook postInstall
   '';
 }

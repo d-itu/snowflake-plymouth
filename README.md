@@ -1,8 +1,6 @@
 ## Snowflake Plymouth
 
-This repo contains Plymouth themes for NixOS:
-- `snowflake-pulse` pulses the NixOS logo.
-- `snowflake` shows a static image.
+This repo contains the `snowflake` Plymouth theme for NixOS, which pulses the NixOS logo.
 
 Please check out the credits section for all the work that inspired this.
 
@@ -22,7 +20,7 @@ Add the flake package to your NixOS configuration:
         {
           boot.plymouth = {
             enable = true;
-            theme = "<theme>";
+            theme = "snowflake";
             themePackages = [ snowflake-plymouth.packages.x86_64-linux.default ];
           };
         }

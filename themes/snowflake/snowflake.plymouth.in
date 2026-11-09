@@ -1,48 +1,8 @@
 [Plymouth Theme]
 Name=snowflake
-Description=A static NixOS snowflake on a black background
-ModuleName=two-step
+Description=A NixOS Plymouth theme with a pulsing glow
+ModuleName=script
 
-[two-step]
+[script]
 ImageDir=@PLYMOUTH_THEME_PATH@/snowflake
-BackgroundStartColor=0x000000
-BackgroundEndColor=0x000000
-WatermarkHorizontalAlignment=.5
-WatermarkVerticalAlignment=.5
-Transition=none
-ProgressBarHorizontalAlignment=.5
-ProgressBarVerticalAlignment=@PROGRESS_BAR_VERTICAL_ALIGNMENT@
-ProgressBarWidth=@PROGRESS_BAR_WIDTH@
-ProgressBarHeight=@PROGRESS_BAR_HEIGHT@
-ProgressBarBackgroundColor=0x404040
-ProgressBarForegroundColor=0xffffff
-
-[boot-up]
-UseAnimation=false
-UseEndAnimation=false
-UseProgressBar=true
-
-[shutdown]
-UseAnimation=false
-UseEndAnimation=false
-UseProgressBar=false
-
-[reboot]
-UseAnimation=false
-UseEndAnimation=false
-UseProgressBar=false
-
-[updates]
-UseAnimation=false
-UseEndAnimation=false
-UseProgressBar=true
-
-[system-upgrade]
-UseAnimation=false
-UseEndAnimation=false
-UseProgressBar=true
-
-[firmware-upgrade]
-UseAnimation=false
-UseEndAnimation=false
-UseProgressBar=true
+ScriptFile=@PLYMOUTH_THEME_PATH@/snowflake/snowflake.script

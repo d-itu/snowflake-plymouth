@@ -23,14 +23,32 @@ let
       -vf 'format=rgba,pad=iw+2*${toString glowPadding}:ih+2*${toString glowPadding}:(ow-iw)/2:(oh-ih)/2:color=black@0,geq=r=255:g=255:b=255:a=alpha(X\,Y),gblur=sigma=${toString blurSigma}:steps=2' \
       -frames:v 1 -f image2 -update 1 "$out"
   '';
-  progressImages = runCommand "progress-images" { nativeBuildInputs = [ ffmpeg ]; } ''
-    mkdir -p "$out"
-    for item in trough:0x404040 fill:0xffffff; do
-      ffmpeg -v error -f lavfi -i "color=c=''${item#*:}:s=2x2" \
-        -vf 'format=rgba,scale=1:1' -frames:v 1 -f image2 -update 1 \
-        "$out/progress-''${item%:*}.png"
-    done
-  '';
+  progressImages =
+    runCommand "progress-images"
+      {
+        nativeBuildInputs = [
+          resvg
+          ffmpeg
+        ];
+      }
+      ''
+        mkdir -p "$out"
+        for item in trough:404040 fill:ffffff; do
+          name="''${item%:*}"
+          substitute ${../themes/snowflake/progress.svg.in} "$TMPDIR/progress.svg" \
+            --replace-fail '@COLOR@' "#''${item#*:}"
+          resvg "$TMPDIR/progress.svg" "$TMPDIR/progress.png"
+          if [ "$name" = fill ]; then
+            cp "$TMPDIR/progress.png" "$out/progress-fill-short.png"
+          fi
+          ffmpeg -v error -i "$TMPDIR/progress.png" -vf 'format=rgba,crop=16:32:0:0' \
+            -frames:v 1 -f image2 -update 1 "$out/progress-$name-left.png"
+          ffmpeg -v error -i "$TMPDIR/progress.png" -vf 'format=rgba,crop=1:1:32:16' \
+            -frames:v 1 -f image2 -update 1 "$out/progress-$name-center.png"
+          ffmpeg -v error -i "$TMPDIR/progress.png" -vf 'format=rgba,crop=16:32:48:0' \
+            -frames:v 1 -f image2 -update 1 "$out/progress-$name-right.png"
+        done
+      '';
 in
 stdenvNoCC.mkDerivation {
   pname = "snowflake-plymouth";

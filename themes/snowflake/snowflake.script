@@ -11,7 +11,7 @@ if (Window.GetHeight() < shortest_side)
 progress.width = Math.Int(Window.GetWidth() * 0.112);
 progress.height = Math.Int(shortest_side * 0.003);
 if (progress.height < 3) progress.height = 3;
-if (progress.height > 8) progress.height = 8;
+progress.cap_width = Math.Int(progress.height / 2);
 
 logo.source = Image("logo.png");
 glow.source = Image("glow.png");
@@ -47,27 +47,34 @@ glow.sprite.SetPosition(
 );
 logo.sprite.SetPosition(logo.x, logo.y, 1);
 
-progress.trough = Image("progress-trough.png").Scale(progress.width, progress.height);
-progress.fill = Image("progress-fill.png");
-progress.trough_sprite = Sprite(progress.trough);
-progress.trough_sprite.SetPosition(
-  Window.GetX() + (Window.GetWidth() - progress.width) / 2,
-  logo.y + 2 * logo.height,
-  2
-);
-progress.fill_sprite = Sprite();
-progress.fill_sprite.SetPosition(
-  progress.trough_sprite.GetX(),
-  progress.trough_sprite.GetY(),
-  3
-);
-progress.fill_sprite.SetOpacity(0);
+progress.x = Window.GetX() + (Window.GetWidth() - progress.width) / 2;
+progress.y = logo.y + 2 * logo.height;
+progress.trough_left = Sprite(Image("progress-trough-left.png").Scale(progress.cap_width, progress.height));
+progress.trough_center = Sprite(Image("progress-trough-center.png").Scale(progress.width - 2 * progress.cap_width, progress.height));
+progress.trough_right = Sprite(Image("progress-trough-right.png").Scale(progress.cap_width, progress.height));
+progress.trough_left.SetPosition(progress.x, progress.y, 2);
+progress.trough_center.SetPosition(progress.x + progress.cap_width, progress.y, 2);
+progress.trough_right.SetPosition(progress.x + progress.width - progress.cap_width, progress.y, 2);
+
+progress.fill_left = Sprite(Image("progress-fill-left.png").Scale(progress.cap_width, progress.height));
+progress.fill_center_image = Image("progress-fill-center.png");
+progress.fill_short_image = Image("progress-fill-short.png");
+progress.fill_center = Sprite();
+progress.fill_right = Sprite(Image("progress-fill-right.png").Scale(progress.cap_width, progress.height));
+progress.fill_left.SetPosition(progress.x, progress.y, 3);
+progress.fill_center.SetPosition(progress.x + progress.cap_width, progress.y, 3);
+progress.fill_right.SetPosition(progress.x + progress.cap_width, progress.y, 3);
+progress.fill_left.SetOpacity(0);
+progress.fill_center.SetOpacity(0);
+progress.fill_right.SetOpacity(0);
 progress.shown_width = 0;
 
 mode = Plymouth.GetMode();
 progress.is_update = mode == "updates" || mode == "system-upgrade" || mode == "firmware-upgrade";
 progress.visible = mode == "boot" || progress.is_update;
-progress.trough_sprite.SetOpacity(progress.visible);
+progress.trough_left.SetOpacity(progress.visible);
+progress.trough_center.SetOpacity(progress.visible);
+progress.trough_right.SetOpacity(progress.visible);
 
 fun show_progress(fraction)
 {
@@ -76,12 +83,29 @@ fun show_progress(fraction)
 
   width = Math.Int(progress.width * fraction);
   if (width == 0)
-    progress.fill_sprite.SetOpacity(0);
+  {
+    progress.fill_left.SetOpacity(0);
+    progress.fill_center.SetOpacity(0);
+    progress.fill_right.SetOpacity(0);
+  }
+  else if (width <= 2 * progress.cap_width)
+  {
+    if (width != progress.shown_width)
+      progress.fill_center.SetImage(progress.fill_short_image.Scale(width, progress.height));
+    progress.fill_center.SetPosition(progress.x, progress.y, 3);
+    progress.fill_left.SetOpacity(0);
+    progress.fill_center.SetOpacity(progress.visible);
+    progress.fill_right.SetOpacity(0);
+  }
   else
   {
     if (width != progress.shown_width)
-      progress.fill_sprite.SetImage(progress.fill.Scale(width, progress.height));
-    progress.fill_sprite.SetOpacity(progress.visible);
+      progress.fill_center.SetImage(progress.fill_center_image.Scale(width - 2 * progress.cap_width, progress.height));
+    progress.fill_center.SetPosition(progress.x + progress.cap_width, progress.y, 3);
+    progress.fill_right.SetPosition(progress.x + width - progress.cap_width, progress.y, 3);
+    progress.fill_left.SetOpacity(progress.visible);
+    progress.fill_center.SetOpacity(progress.visible);
+    progress.fill_right.SetOpacity(progress.visible);
   }
   progress.shown_width = width;
 }
